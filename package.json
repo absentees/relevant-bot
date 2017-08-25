@@ -1,0 +1,13 @@
+{
+  "name": "relevant-bot",
+  "version": "1.0.0",
+  "description": "bot for relevant domains",
+  "main": "index.js",
+  "repository": "https://github.com/absentees/relevant-bot.git",
+  "author": "absentees <scottblissett@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^4.0.0",
+    "twitter": "^1.7.1"
+  }
+}
