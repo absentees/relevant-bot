@@ -4,13 +4,14 @@ var Airtable = require('airtable');
 var async = require('async');
 var Hashids = require('hashids');
 var hashids = new Hashids('mrpoopybutthole', 10, 'abcdefghijklmnopqrstuvwxyz1234567890');
-var moment = require('moment');
+var CronJob = require('cron').CronJob;
+
 
 Airtable.configure({
 	endpointUrl: 'https://api.airtable.com',
-	apiKey: process.env.AIRTABLE_API_KEY
+	apiKey: process.env.RELEVANT_BOT_AIRTABLE_API_KEY
 });
-var base = Airtable.base(process.env.AIRTABLE_BASE_ID);
+var base = Airtable.base(process.env.RELEVANT_BOT_AIRTABLE_BASE_ID);
 
 var client = new Twitter({
 	consumer_key: process.env.RELEVANT_BOT_TWITTER_CONSUMER_KEY,
@@ -19,7 +20,7 @@ var client = new Twitter({
 	access_token_secret: process.env.RELEVANT_BOT_TWITTER_ACCESS_TOKEN_SECRET
 });
 
-function GetAvailableDomains(callback){
+function GetAvailableDomains(callback) {
 	console.log("Getting all available domains from Airtable");
 	var domains = [];
 
@@ -46,47 +47,45 @@ function GetAvailableDomains(callback){
 	});
 }
 
-function ReplyToTweets(domains, callback) {
-	console.log("Finding relevant tweets");
-	domains.forEach(function(domain){
-		if (domain.word) {
-			client.get('search/tweets', {
-				// q: '\"' + domain.word + '\"',
-				q: '\"Relevant Domains\"',
-				count: '1'
-			}, function (error, tweets, response) {
-				if (error && tweets.statuses.length > 0) {
+function ReplyToTweet(domains, callback) {
+	// Select a random domain
+	var randomDomain = domains[Math.floor(Math.random() * domains.length)];
+
+	if (randomDomain.word) {
+		console.log("Finding relevant tweet for: " + randomDomain.word);
+		client.get('search/tweets', {
+			q: '\"' + randomDomain.word + '\"',
+		}, function (error, tweets, response) {
+			if (error && tweets.statuses.length > 0) {
+				return callback(error);
+			}
+
+			// Select random tweet
+			var replyTo = tweets.statuses[Math.floor(Math.random() * tweets.statuses.length)];
+
+			console.log("Posting in reply to screen name: " + replyTo.user.screen_name);
+			client.post('statuses/update', {
+				status: ".@" + replyTo.user.screen_name + " the domain: " + randomDomain.title + " " + randomDomain.available + " https://www.relevant.domains/" + randomDomain.url
+			}, function (error, tweet, response) {
+				if (error) {
 					return callback(error);
 				}
 
-				// Select random tweet
-				var replyTo = tweets.statuses[Math.floor(Math.random()*tweets.statuses.length)];
-
-				console.log("Posting in reply to screen name: " + replyTo.user.screen_name);
-				client.post('statuses/update', {
-					status: ".@" + replyTo.user.screen_name + " the domain: " + domain.title + " " + domain.available + " https://www.relevant.domains/" + domain.url
-				}, function(error, tweet, response){
-					if (error) {
-						return callback(error);
-					}
-
-					callback();
-				});
+				callback();
 			});
-		}
-	});
+		});
+	}
 }
 
-// Tweet every hour
-var timer = moment.duration(1, "hour").timer({
-  loop: true
-}, function() {
-	async.waterfall([
-		GetAvailableDomains,
-		ReplyToTweets
-	], function (err, words) {
-		if (err) {
-			console.log(`Something went wrong: ${err}`);
-		}
-	});
-});
+console.log("Tweeting once a day at 8am.");
+new CronJob('0 0 8 * * *', function() {
+	// Tweet once a day
+		async.waterfall([
+			GetAvailableDomains,
+			ReplyToTweet
+		], function (err, words) {
+			if (err) {
+				console.log(`Something went wrong: ${err}`);
+			}
+		});
+}, null, true, 'Australia/Sydney');
