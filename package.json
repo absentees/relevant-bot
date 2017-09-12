@@ -6,6 +6,9 @@
   "repository": "https://github.com/absentees/relevant-bot.git",
   "author": "absentees <scottblissett@gmail.com>",
   "license": "MIT",
+	"scripts": {
+		"start": "node index.js"
+	},
   "dependencies": {
     "airtable": "^0.5.0",
     "async": "^2.5.0",
