@@ -77,8 +77,7 @@ function ReplyToTweet(domains, callback) {
 	}
 }
 
-console.log("Tweeting once a day at 8am.");
-new CronJob('0 0 8 * * *', function() {
+var cronJob = new CronJob('0 0 8 * * *', function() {
 	// Tweet once a day
 		async.waterfall([
 			GetAvailableDomains,
@@ -89,3 +88,5 @@ new CronJob('0 0 8 * * *', function() {
 			}
 		});
 }, null, true, 'Australia/Sydney');
+
+console.log("Job is: " + cronJob.running + " – tweeting once a day at 8am.");
