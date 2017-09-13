@@ -87,6 +87,11 @@ var cronJob = new CronJob('0 0 8 * * *', function() {
 				console.log(`Something went wrong: ${err}`);
 			}
 		});
-}, null, true, 'Australia/Sydney');
+}, null, false, 'Australia/Sydney');
 
+cronJob.start();
 console.log("Job is: " + cronJob.running + " – tweeting once a day at 8am.");
+
+module.exports = (req, res) => {
+  res.end('Relevant Bot: ' + cronJob.running)
+}
