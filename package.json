@@ -18,5 +18,15 @@
     "micro": "^9.0.0",
     "moment": "^2.18.1",
     "twitter": "^1.7.1"
-  }
+  },
+	"now": {
+		"env": {
+			"RELEVANT_BOT_TWITTER_CONSUMER_KEY": "@relevant_bot_twitter_consumer_key",
+			"RELEVANT_BOT_TWITTER_CONSUMER_SECRET": "@relevant_bot_twitter_consumer_secret",
+			"RELEVANT_BOT_TWITTER_ACCESS_TOKEN_KEY": "@relevant_bot_twitter_access_token_key",
+			"RELEVANT_BOT_TWITTER_ACCESS_TOKEN_SECRET": "@relevant_bot_twitter_access_token_secret",
+			"RELEVANT_BOT_AIRTABLE_API_KEY": "@relevant_bot_airtable_api_key",
+			"RELEVANT_BOT_AIRTABLE_BASE_ID": "@relevant_bot_airtable_base_id"
+		}
+	}
 }

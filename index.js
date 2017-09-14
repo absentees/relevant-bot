@@ -77,7 +77,7 @@ function ReplyToTweet(domains, callback) {
 	}
 }
 
-var cronJob = new CronJob('0 0 8 * * *', function() {
+var cronJob = new CronJob('0 0 */12 * * *', function() {
 	// Tweet once a day
 		async.waterfall([
 			GetAvailableDomains,
@@ -90,7 +90,7 @@ var cronJob = new CronJob('0 0 8 * * *', function() {
 }, null, false, 'Australia/Sydney');
 
 cronJob.start();
-console.log("Job is: " + cronJob.running + " – tweeting once a day at 8am.");
+console.log("Job is: " + cronJob.running + " – tweeting once an hour.");
 
 module.exports = (req, res) => {
   res.end('Relevant Bot: ' + cronJob.running)
